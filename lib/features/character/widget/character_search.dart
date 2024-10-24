@@ -1,7 +1,7 @@
 part of '../view/character_view.dart';
 
 class _CharacterSearch extends StatelessWidget {
-  const _CharacterSearch({
+  _CharacterSearch({
     required this.searchController,
   });
 
@@ -31,7 +31,7 @@ class _CharacterSearch extends StatelessWidget {
           onPressed: () {
             showModalBottomSheet(
               context: context,
-              builder: (context) => Container(),
+              builder: (context) => _FilterSection(),
             );
           },
           icon: Container(
@@ -45,6 +45,91 @@ class _CharacterSearch extends StatelessWidget {
               )),
         ),
       ],
+    );
+  }
+}
+
+class _FilterSection extends StatelessWidget {
+  _FilterSection();
+
+  final List<String> _status = ['Alive', 'Dead', 'Unknown'];
+  final Map<String, IconData> _gender = {
+    'Male': Icons.male,
+    'Female': Icons.female,
+    'Genderless': Icons.question_mark,
+    'Unknown': Icons.question_mark
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: context.paddingAllDefault,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Align(
+            alignment: Alignment.topCenter,
+            child: Text(
+              'Filtrele',
+              style: context.textTheme.titleMedium,
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(
+            'Statü',
+            style: context.textTheme.titleLarge,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: _status
+                .map((e) => Padding(
+                      padding: context.paddingRightLow,
+                      child: Chip(label: Text(e)),
+                    ))
+                .toList(),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(
+            'Cinsiyet',
+            style: context.textTheme.titleLarge,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 4.0,
+            children: _gender.entries.map((entry) {
+              return Chip(label: Text(entry.key), avatar: Icon(entry.value));
+            }).toList(),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green.shade600,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  minimumSize: const Size(200, 40),
+                ),
+                onPressed: () {},
+                child: const Text(
+                  'Uygula',
+                  style: TextStyle(color: Colors.black),
+                )),
+          )
+        ],
+      ),
     );
   }
 }
