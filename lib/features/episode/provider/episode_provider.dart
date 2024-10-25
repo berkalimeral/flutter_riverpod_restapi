@@ -12,8 +12,9 @@ Future<EpisodeModel> episodes(Ref ref) async {
   return rickMortyService.getEpisodes();
 }
 
-@riverpod
+/* @riverpod
 Future<List<EpisodeModel>> episodeById(Ref ref, List<String> id) async {
   final rickMortyService = ref.watch(AppProviders.rickMortyServiceProvider);
   return rickMortyService.getEpisodeById(id);
 }
+ */
