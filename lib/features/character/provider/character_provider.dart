@@ -4,47 +4,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/providers/app_providers.dart';
 import '../../../product/models/character/character_model.dart';
+import '../../../product/service/rick_morty_service.dart';
+import 'character_state.dart';
 
 part 'character_provider.g.dart';
-
-class CharactersState {
-  final List<Character> characters;
-  final List<Character> searchCharacters;
-  final bool hasNextPage;
-  final bool loadMore;
-  final bool isLoading;
-  final bool isSearch;
-  final int currentPage;
-
-  CharactersState(
-      {required this.characters,
-      required this.searchCharacters,
-      this.hasNextPage = true,
-      this.loadMore = false,
-      this.isLoading = false,
-      this.isSearch = false,
-      required this.currentPage});
-
-  CharactersState copyWith({
-    List<Character>? characters,
-    List<Character>? searchCharacters,
-    bool? hasNextPage,
-    bool? loadMore,
-    bool? isLoading,
-    bool? isSearch,
-    int? currentPage,
-  }) {
-    return CharactersState(
-      characters: characters ?? this.characters,
-      searchCharacters: searchCharacters ?? this.searchCharacters,
-      hasNextPage: hasNextPage ?? this.hasNextPage,
-      loadMore: loadMore ?? this.loadMore,
-      isLoading: isLoading ?? this.isLoading,
-      isSearch: isSearch ?? this.isSearch,
-      currentPage: currentPage ?? this.currentPage,
-    );
-  }
-}
 
 @riverpod
 class Characters extends _$Characters {
@@ -61,70 +24,79 @@ class Characters extends _$Characters {
     );
   }
 
-  Future<List<Character>> fetchCharacters() async {
+  RickMortyService get _rickMortyService =>
+      ref.read(AppProviders.rickMortyServiceProvider);
+
+  Future<void> fetchCharacters() async {
+    if (!_hasNextPage) return;
+
+    state = state.copyWith(isLoading: true);
+
     try {
-      if (!_hasNextPage) return _characters;
-      state = state.copyWith(isLoading: true);
-      final rickMortyService = ref.watch(AppProviders.rickMortyServiceProvider);
-      final response = await rickMortyService
+      final response = await _rickMortyService
           .getCharacters(queryParameters: {'page': _currentPage.toString()});
 
       if (response.results != null) {
-        _characters.addAll(response.results ?? []);
+        _characters.addAll(response.results!);
         _hasNextPage = response.info?.next != null;
         _currentPage++;
       }
+
       state = state.copyWith(
-          characters: _characters, isLoading: false, currentPage: _currentPage);
-      return _characters;
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 404) {
-        state = state.copyWith(searchCharacters: []);
-        return [];
-      } else {
-        state = state.copyWith(searchCharacters: []);
-        return [];
-      }
+        characters: List.from(_characters),
+        isLoading: false,
+        currentPage: _currentPage,
+        hasNextPage: _hasNextPage,
+      );
+    } on DioException catch (_) {
+      state = state.copyWith(
+        isLoading: false,
+        searchCharacters: [],
+      );
+      // Consider logging the error or notifying the user
     }
   }
 
   Future<void> loadMore() async {
-    if (!_hasNextPage) return;
-    if (state.isSearch) {
-      return;
-    }
-    state = state.copyWith(loadMore: true, isLoading: true);
-
-    var characters = await fetchCharacters();
-    state = state.copyWith(isLoading: false, characters: characters);
+    if (!_hasNextPage || state.isSearch || state.isLoading) return;
+    await fetchCharacters();
   }
 
-  void refresh() async {
+  Future<void> refresh() async {
     _currentPage = 1;
     _characters.clear();
     _hasNextPage = true;
-    state = state.copyWith(loadMore: true, isLoading: true, isSearch: false);
-    var characters = await fetchCharacters();
-    state = state.copyWith(isLoading: false, characters: characters);
+    state = state.copyWith(isSearch: false);
+    await fetchCharacters();
   }
 
   Future<void> getCharacterByQuery(
       {Map<String, dynamic>? queryParameters}) async {
-    final rickMortyService = ref.watch(AppProviders.rickMortyServiceProvider);
     if (queryParameters?.isEmpty ?? true) {
       state = state.copyWith(isSearch: false);
       return;
     }
+
     state = state.copyWith(isLoading: true);
-    var character = await rickMortyService.getCharacterByQuery(
-        queryParameters: queryParameters);
-    if (character.results != null) {
-      state =
-          state.copyWith(isSearch: true, searchCharacters: character.results);
-    } else {
-      state = state.copyWith(isSearch: true, searchCharacters: []);
+
+    try {
+      final character = await _rickMortyService.getCharacterByQuery(
+        queryParameters: queryParameters,
+      );
+
+      state = state.copyWith(
+        isSearch: true,
+        searchCharacters: character.results ?? [],
+        isLoading: false,
+      );
+    } on DioException catch (_) {
+      state = state.copyWith(
+        isSearch: true,
+        searchCharacters: [],
+        isLoading: false,
+      );
+      // Consider logging the error or notifying the user
     }
-    state = state.copyWith(isLoading: false);
   }
 }
 
