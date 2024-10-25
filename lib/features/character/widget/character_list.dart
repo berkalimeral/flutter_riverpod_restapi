@@ -13,18 +13,20 @@ class _CharacterList extends StatelessWidget {
       builder: (context, ref, child) {
         final characterState = ref.watch(charactersProvider);
 
-        /*   if (characterState.currentPage == 1) {
-          return const ShimmerEffect();
-        } */
-
         return ListView.builder(
           controller: scrollController,
-          itemCount: characterState.characters.length,
+          itemCount: characterState.isSearch
+              ? characterState.searchCharacters.length
+              : characterState.characters.length,
           itemBuilder: (context, index) {
-            if (characterState.characters.isEmpty) {
-              return const SizedBox.shrink();
+            Character character;
+
+            if (characterState.isSearch) {
+              character = characterState.searchCharacters[index];
+            } else {
+              character = characterState.characters[index];
             }
-            final character = characterState.characters[index];
+
             return Column(
               children: [
                 CharacterItem(
