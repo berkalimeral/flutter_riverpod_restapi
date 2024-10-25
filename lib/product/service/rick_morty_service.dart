@@ -1,5 +1,3 @@
-import 'package:dio/dio.dart';
-
 import '../../core/network/network_client.dart';
 import '../../core/network/network_constants.dart';
 import '../models/character/character_model.dart';
