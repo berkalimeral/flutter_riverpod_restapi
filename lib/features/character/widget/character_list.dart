@@ -31,7 +31,7 @@ class _CharacterList extends StatelessWidget {
               children: [
                 CharacterItem(
                     character: character, isLoading: characterState.isLoading),
-                if (characterState.loadMore &&
+                if (characterState.hasNextPage &&
                     index == characterState.characters.length - 1)
                   const CircularProgressIndicator.adaptive()
               ],
