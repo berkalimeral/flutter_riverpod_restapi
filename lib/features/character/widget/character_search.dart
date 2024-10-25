@@ -1,7 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of '../view/character_view.dart';
 
-class _CharacterSearch extends ConsumerWidget {
+class _CharacterSearch extends ConsumerStatefulWidget {
   const _CharacterSearch({
     required this.searchController,
   });
@@ -9,12 +8,66 @@ class _CharacterSearch extends ConsumerWidget {
   final TextEditingController searchController;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_CharacterSearch> createState() => _CharacterSearchState();
+}
+
+class _CharacterSearchState extends ConsumerState<_CharacterSearch> {
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  bool _speechEnabled = false;
+  bool _listening = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initSpeech();
+  }
+
+  _initSpeech() async {
+    await _speech.initialize().then(
+          (value) => setState(() {
+            _speechEnabled = value;
+          }),
+        );
+  }
+
+  void _performSearch(String query) {
+    ref
+        .read(charactersProvider.notifier)
+        .getCharacterByQuery(queryParameters: {'name': query});
+  }
+
+  _startListening() async {
+    if (_speechEnabled) {
+      _listening = true;
+      await _speech.listen(
+        pauseFor: const Duration(seconds: 5),
+        onResult: (value) {
+          setState(() {
+            widget.searchController.text = value.recognizedWords;
+          });
+          if (value.finalResult) {
+            _performSearch(value.recognizedWords);
+          }
+        },
+      );
+      setState(() {});
+    }
+  }
+
+  _stopListening() async {
+    await _speech.stop();
+    setState(() {
+      _listening = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
           child: TextField(
-            controller: searchController,
+            controller: widget.searchController,
             onChanged: (value) {
               ref
                   .read(charactersProvider.notifier)
@@ -27,6 +80,19 @@ class _CharacterSearch extends ConsumerWidget {
               fillColor: Colors.white,
               filled: true,
               prefixIcon: const Icon(Icons.search),
+              suffixIcon: IconButton(
+                onPressed: () {
+                  if (widget.searchController.text.isNotEmpty) {
+                    widget.searchController.clear();
+                    setState(() {});
+                  } else {
+                    _startListening();
+                  }
+                },
+                icon: widget.searchController.text.isNotEmpty
+                    ? const Icon(Icons.clear_outlined)
+                    : const Icon(Icons.mic_outlined),
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -37,7 +103,7 @@ class _CharacterSearch extends ConsumerWidget {
           onPressed: () {
             showModalBottomSheet(
               context: context,
-              builder: (context) => const _FilterSection(),
+              builder: (context) => const FilterSection(),
             );
           },
           icon: Container(
@@ -53,152 +119,4 @@ class _CharacterSearch extends ConsumerWidget {
       ],
     );
   }
-}
-
-class _FilterSection extends ConsumerStatefulWidget {
-  const _FilterSection();
-
-  @override
-  ConsumerState<_FilterSection> createState() => _FilterSectionState();
-}
-
-class _FilterSectionState extends ConsumerState<_FilterSection> {
-  @override
-  Widget build(BuildContext context) {
-    final filterState = ref.watch(filterProvider);
-
-    return Padding(
-      padding: context.paddingAllDefault,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: Text(
-              'Filtrele',
-              style: context.textTheme.titleMedium,
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(
-            'Statü',
-            style: context.textTheme.titleLarge,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: Status.values
-                .map((entry) => Padding(
-                      padding: context.paddingRightLow,
-                      child: ChoiceChip(
-                        label: Text(entry.name),
-                        selected: filterState.selectedStatus == entry.name,
-                        selectedColor: Colors.green.shade600,
-                        onSelected: (value) {
-                          if (value) {
-                            ref
-                                .read(filterProvider.notifier)
-                                .setStatus(entry.name);
-                          } else {
-                            ref.read(filterProvider.notifier).setStatus(null);
-                          }
-                        },
-                      ),
-                    ))
-                .toList(),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(
-            'Cinsiyet',
-            style: context.textTheme.titleLarge,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Wrap(
-            spacing: 8.0,
-            runSpacing: 4.0,
-            children: Gender.values.map((entry) {
-              return ChoiceChip(
-                selected: filterState.selectedGender == entry.name,
-                selectedColor: Colors.green.shade600,
-                label: Text(entry.name),
-                avatar: Icon(entry.icon),
-                onSelected: (value) {
-                  if (value) {
-                    ref.read(filterProvider.notifier).setGender(entry.name);
-                  } else {
-                    ref.read(filterProvider.notifier).setGender(null);
-                  }
-                },
-              );
-            }).toList(),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green.shade600,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  minimumSize: const Size(200, 40),
-                ),
-                onPressed: () {
-                  ref.read(charactersProvider.notifier).getCharacterByQuery(
-                    queryParameters: {
-                      if (filterState.selectedStatus != null)
-                        'status': filterState.selectedStatus,
-                      if (filterState.selectedGender != null)
-                        'gender': filterState.selectedGender,
-                    },
-                  );
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  'Uygula',
-                  style: TextStyle(color: Colors.black),
-                )),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class Status {
-  String name;
-  Status({
-    required this.name,
-  });
-
-  static List<Status> get values => [
-        Status(name: 'Alive'),
-        Status(name: 'Dead'),
-        Status(name: 'Unknown'),
-      ];
-}
-
-class Gender {
-  String name;
-  IconData icon;
-  Gender({
-    required this.name,
-    required this.icon,
-  });
-
-  static List<Gender> get values => [
-        Gender(name: 'Male', icon: Icons.male),
-        Gender(name: 'Female', icon: Icons.female),
-        Gender(name: 'Genderless', icon: Icons.question_mark),
-        Gender(name: 'Unknown', icon: Icons.question_mark),
-      ];
 }
