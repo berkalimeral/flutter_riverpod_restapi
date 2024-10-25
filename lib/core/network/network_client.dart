@@ -28,7 +28,7 @@ final class NetworkClient {
       );
       return response;
     } on DioException catch (_) {
-      rethrow;
+      return Response(requestOptions: RequestOptions());
     }
   }
 
@@ -48,7 +48,7 @@ final class NetworkClient {
       );
       return response;
     } on DioException catch (_) {
-      rethrow;
+      return Response(requestOptions: RequestOptions());
     }
   }
 }
