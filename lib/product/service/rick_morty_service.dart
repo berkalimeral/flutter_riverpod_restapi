@@ -41,16 +41,19 @@ class RickMortyService {
         .toList();
   }
 
-  Future<List<EpisodeModel>> getEpisodeById(List<String> id) async {
-    String ids = id.join(',');
-    if (id.length == 1) ids = '$ids,';
+  Future<EpisodeModel> getEpisodeById(List<String> id) async {
+    List<String> ids = id.map((e) => e.split('/').last).toList();
+    String episodes = ids.join(',');
+    if (ids.length == 1) episodes = '$episodes,';
     final response =
-        await _networkClient.get('${NetworkConstants.episode}/$ids');
-    return (response.data! as List)
-        .map(
-          (e) => EpisodeModel.fromJson(e),
-        )
-        .toList();
+        await _networkClient.get('${NetworkConstants.episode}/$episodes');
+    if (response.data is List) {
+      return EpisodeModel(
+          results:
+              (response.data as List).map((e) => Episode.fromJson(e)).toList());
+    } else {
+      return EpisodeModel.fromJson(response.data!);
+    }
   }
 
   Future<List<LocationModel>> getLocationById(List<String> id) async {
