@@ -29,6 +29,8 @@ class NavigationMenu extends StatelessWidget {
           backgroundColor: Colors.white,
           type: BottomNavigationBarType.fixed,
           elevation: 3,
+          selectedIconTheme: const IconThemeData(color: Colors.teal),
+          selectedLabelStyle: const TextStyle(color: Colors.teal),
           items: const [
             BottomNavigationBarItem(
                 icon: Icon(Icons.groups_outlined), label: 'Karakterler'),
