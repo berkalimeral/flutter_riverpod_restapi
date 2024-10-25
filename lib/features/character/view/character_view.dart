@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_restapi/core/extensions/context_extension.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../core/providers/filter_provider/filter_provider.dart';
+import '../../../core/routes/route_names.dart';
 import '../../../core/utility/custom_clipper/custom_clipper.dart';
 import '../../../core/widgets/image_build/custom_image_build.dart';
+import '../../../core/widgets/loading/loading_screen.dart';
 import '../../../core/widgets/shimmer_effect/shimmer_effect.dart';
 import '../../../product/models/character/character_model.dart';
 import '../provider/character_provider.dart';
@@ -36,8 +40,20 @@ class _CharacterScreenState extends ConsumerState<CharacterScreen>
             children: [
               _CharacterSearch(searchController: searchController),
               _bodyTitle(context),
-              Expanded(
-                  child: _CharacterList(scrollController: scrollController)),
+              Consumer(builder: (context, ref, child) {
+                final characterState = ref.watch(charactersProvider);
+                if (characterState.isSearch &&
+                    characterState.searchCharacters.isEmpty) {
+                  return const Align(
+                    alignment: Alignment.center,
+                    child: Text('Karakter bulunamadı!'),
+                  );
+                }
+                return Expanded(
+                    child: characterState.isLoading
+                        ? const LoadingScreen()
+                        : _CharacterList(scrollController: scrollController));
+              }),
             ],
           ),
         ),
