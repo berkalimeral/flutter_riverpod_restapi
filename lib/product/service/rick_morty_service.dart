@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 import '../../core/network/network_client.dart';
 import '../../core/network/network_constants.dart';
 import '../models/character/character_model.dart';
@@ -63,5 +65,15 @@ class RickMortyService {
           (e) => LocationModel.fromJson(e),
         )
         .toList();
+  }
+
+  Future<CharacterModel> getCharacterByQuery(
+      {Map<String, dynamic>? queryParameters}) async {
+    final response = await _networkClient.get(NetworkConstants.character,
+        queryParameters: queryParameters);
+    if (response.data != null) {
+      return CharacterModel.fromJson(response.data!);
+    }
+    return CharacterModel();
   }
 }
