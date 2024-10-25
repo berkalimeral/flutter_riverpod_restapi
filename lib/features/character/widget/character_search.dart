@@ -14,7 +14,7 @@ class _CharacterSearch extends ConsumerStatefulWidget {
 class _CharacterSearchState extends ConsumerState<_CharacterSearch> {
   final stt.SpeechToText _speech = stt.SpeechToText();
   bool _speechEnabled = false;
-  bool _listening = false;
+  //bool _listening = false;
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class _CharacterSearchState extends ConsumerState<_CharacterSearch> {
 
   _startListening() async {
     if (_speechEnabled) {
-      _listening = true;
+      //_listening = true;
       await _speech.listen(
         pauseFor: const Duration(seconds: 5),
         onResult: (value) {
@@ -53,13 +53,13 @@ class _CharacterSearchState extends ConsumerState<_CharacterSearch> {
       setState(() {});
     }
   }
-
+/* 
   _stopListening() async {
     await _speech.stop();
     setState(() {
       _listening = false;
     });
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {

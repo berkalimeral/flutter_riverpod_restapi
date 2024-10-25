@@ -159,7 +159,7 @@ class _CharacterByIdProviderElement
   List<String> get id => (origin as CharacterByIdProvider).id;
 }
 
-String _$charactersHash() => r'84bc8e74b592cb8fe92356b84302146ad49ae5b7';
+String _$charactersHash() => r'7cb0124a0dde87113ec475e640072a794516522e';
 
 /// See also [Characters].
 @ProviderFor(Characters)
