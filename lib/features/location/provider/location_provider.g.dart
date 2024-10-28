@@ -19,8 +19,6 @@ final locationsProvider = AutoDisposeFutureProvider<LocationModel>.internal(
   allTransitiveDependencies: null,
 );
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
 typedef LocationsRef = AutoDisposeFutureProviderRef<LocationModel>;
 String _$locationByIdHash() => r'0c05dcba61e086068aff7e54a41071e8698a8c0e';
 
@@ -159,8 +157,6 @@ class LocationByIdProvider
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
 mixin LocationByIdRef on AutoDisposeFutureProviderRef<List<LocationModel>> {
   /// The parameter `id` of this provider.
   List<String> get id;
@@ -175,4 +171,4 @@ class _LocationByIdProviderElement
   List<String> get id => (origin as LocationByIdProvider).id;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

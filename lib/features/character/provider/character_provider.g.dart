@@ -143,8 +143,6 @@ class CharacterByIdProvider
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
 mixin CharacterByIdRef on AutoDisposeFutureProviderRef<List<CharacterModel>> {
   /// The parameter `id` of this provider.
   List<String> get id;
@@ -159,7 +157,7 @@ class _CharacterByIdProviderElement
   List<String> get id => (origin as CharacterByIdProvider).id;
 }
 
-String _$charactersHash() => r'7cb0124a0dde87113ec475e640072a794516522e';
+String _$charactersHash() => r'b16e719a37dbe8c4bae21e84625c5eb0f00d975d';
 
 /// See also [Characters].
 @ProviderFor(Characters)
@@ -175,4 +173,4 @@ final charactersProvider =
 
 typedef _$Characters = AutoDisposeNotifier<CharactersState>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
