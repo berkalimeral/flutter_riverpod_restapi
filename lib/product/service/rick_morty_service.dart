@@ -31,14 +31,20 @@ class RickMortyService {
     return response.data!;
   }
 
-  Future<List<CharacterModel>> getCharacterById(List<String> id) async {
-    String ids = id.join(',');
-    if (id.length == 1) ids = '$ids,';
+  Future<CharacterModel> getCharacterById(List<String> id) async {
+    List<String> ids = id.map((e) => e.split('/').last).toList();
+    String character = ids.join(',');
+    if (ids.length == 1) character = '$character,';
     final response =
-        await _networkClient.get('${NetworkConstants.character}/$ids');
-    return (response.data! as List)
-        .map((e) => CharacterModel.fromJson(e))
-        .toList();
+        await _networkClient.get('${NetworkConstants.character}/$character');
+    if (response.data is List) {
+      return CharacterModel(
+          results: (response.data as List)
+              .map((e) => Character.fromJson(e))
+              .toList());
+    } else {
+      return CharacterModel.fromJson(response.data!);
+    }
   }
 
   Future<EpisodeModel> getEpisodeById(List<String> id) async {
