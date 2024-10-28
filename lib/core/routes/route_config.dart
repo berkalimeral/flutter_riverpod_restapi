@@ -4,9 +4,11 @@ import 'package:go_router/go_router.dart';
 import '../../features/character/view/character_view.dart';
 import '../../features/character_detail/view/character_detail_view.dart';
 import '../../features/episode/view/episode_view.dart';
+import '../../features/episode_detail/view/episode_detail_view.dart';
 import '../../features/favorites/view/favorite_view.dart';
 import '../../features/navigation_menu/navigation_menu.dart';
 import '../../product/models/character/character_model.dart';
+import '../../product/models/episode/episode_model.dart';
 import 'route_names.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -61,6 +63,17 @@ final class RouteConfig {
             GoRoute(
               path: RouteNames.episodeScreen,
               builder: (context, state) => const EpisodeScreen(),
+              routes: [
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  name: 'episodeDetail',
+                  path: RouteNames
+                      .episodeDetailScreen, // Relative path kullanılmalı
+                  builder: (context, state) => EpisodeDetailScreen(
+                    episode: state.extra as Episode,
+                  ),
+                ),
+              ],
             ),
           ]),
 
