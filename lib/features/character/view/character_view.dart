@@ -1,17 +1,17 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_restapi/core/extensions/context_extension.dart';
 import 'package:go_router/go_router.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
+import '../../../core/db/local_db_model.dart';
 import '../../../core/routes/route_names.dart';
 import '../../../core/utility/custom_clipper/custom_clipper.dart';
 import '../../../core/widgets/image_build/custom_image_build.dart';
 import '../../../core/widgets/loading/loading_screen.dart';
 import '../../../core/widgets/shimmer_effect/shimmer_effect.dart';
 import '../../../product/models/character/character_model.dart';
+import '../../favorites/provider/favorite_provider.dart';
 import '../provider/character_provider.dart';
 import '../widget/custom_filter.dart';
 
