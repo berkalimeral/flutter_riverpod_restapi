@@ -38,6 +38,8 @@ class NavigationMenu extends StatelessWidget {
                 icon: Icon(Icons.location_on_outlined), label: 'Lokasyonlar'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.movie_creation_outlined), label: 'Bölümler'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.favorite_border_outlined), label: 'Favoriler'),
           ],
         ),
       ),

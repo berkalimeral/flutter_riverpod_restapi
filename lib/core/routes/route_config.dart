@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/character/view/character_view.dart';
 import '../../features/character_detail/view/character_detail_view.dart';
+import '../../features/favorites/view/favorite_view.dart';
 import '../../features/navigation_menu/navigation_menu.dart';
 import '../../product/models/character/character_model.dart';
 import 'route_names.dart';
@@ -59,6 +60,14 @@ final class RouteConfig {
             GoRoute(
               path: RouteNames.episodeScreen,
               builder: (context, state) => const CharacterScreen(),
+            ),
+          ]),
+
+          // Tab D - Favorite Screen
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: RouteNames.favoriteScreen,
+              builder: (context, state) => const FavoriteScreen(),
             ),
           ]),
         ],
