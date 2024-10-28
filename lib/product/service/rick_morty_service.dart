@@ -28,7 +28,7 @@ class RickMortyService {
       {Map<String, dynamic>? queryParameters}) async {
     final response = await _networkClient.get(NetworkConstants.location,
         queryParameters: queryParameters);
-    return response.data!;
+    return LocationModel.fromJson(response.data!);
   }
 
   Future<CharacterModel> getCharacterById(List<String> id) async {
