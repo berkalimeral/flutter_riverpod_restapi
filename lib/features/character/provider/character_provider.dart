@@ -5,7 +5,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/providers/app_providers.dart';
 import '../../../product/models/character/character_model.dart';
 import '../../../product/service/rick_morty_service.dart';
-import '../../favorites/provider/favorite_provider.dart';
 import 'character_state.dart';
 
 part 'character_provider.g.dart';
@@ -99,10 +98,4 @@ class Characters extends _$Characters {
       // Consider logging the error or notifying the user
     }
   }
-}
-
-@riverpod
-Future<List<CharacterModel>> characterById(Ref ref, List<String> id) async {
-  final rickMortyService = ref.watch(AppProviders.rickMortyServiceProvider);
-  return rickMortyService.getCharacterById(id);
 }
