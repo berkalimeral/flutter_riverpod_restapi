@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/providers/app_providers.dart';
 import '../../../product/models/character/character_model.dart';
 import '../../../product/service/rick_morty_service.dart';
+import '../../favorites/provider/favorite_provider.dart';
 import 'character_state.dart';
 
 part 'character_provider.g.dart';
@@ -43,7 +44,7 @@ class Characters extends _$Characters {
       }
 
       state = state.copyWith(
-        characters: List.from(_characters),
+        characters: _characters,
         isLoading: false,
         currentPage: _currentPage,
         hasNextPage: _hasNextPage,
