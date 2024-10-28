@@ -6,9 +6,12 @@ import '../../features/character_detail/view/character_detail_view.dart';
 import '../../features/episode/view/episode_view.dart';
 import '../../features/episode_detail/view/episode_detail_view.dart';
 import '../../features/favorites/view/favorite_view.dart';
+import '../../features/location/view/location_view.dart';
+import '../../features/location_detail/view/location_detail_view.dart';
 import '../../features/navigation_menu/navigation_menu.dart';
 import '../../product/models/character/character_model.dart';
 import '../../product/models/episode/episode_model.dart';
+import '../../product/models/location/location_model.dart';
 import 'route_names.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -54,7 +57,17 @@ final class RouteConfig {
           StatefulShellBranch(routes: [
             GoRoute(
               path: RouteNames.locationScreen,
-              builder: (context, state) => const CharacterScreen(),
+              builder: (context, state) => const LocationScreen(),
+              routes: [
+                GoRoute(
+                  parentNavigatorKey: _rootNavigatorKey,
+                  name: 'locationDetail',
+                  path: RouteNames.locationDetailScreen,
+                  builder: (context, state) => LocationDetailScreen(
+                    location: state.extra as Location,
+                  ),
+                ),
+              ],
             ),
           ]),
 
