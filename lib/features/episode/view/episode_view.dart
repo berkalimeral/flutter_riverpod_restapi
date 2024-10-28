@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod_restapi/core/extensions/context_extension.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/widgets/error/error_screen.dart';
 import '../../../core/widgets/loading/loading_screen.dart';
