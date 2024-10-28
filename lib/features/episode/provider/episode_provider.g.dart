@@ -6,12 +6,13 @@ part of 'episode_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$episodesHash() => r'be9295b002f9c8be1d58d7d8e4fc2f78df4da89d';
+String _$episodesHash() => r'65a4f7117d1115eeca4f7e51d7a58289b32ec0cc';
 
-/// See also [episodes].
-@ProviderFor(episodes)
-final episodesProvider = AutoDisposeFutureProvider<EpisodeModel>.internal(
-  episodes,
+/// See also [Episodes].
+@ProviderFor(Episodes)
+final episodesProvider =
+    AutoDisposeNotifierProvider<Episodes, EpisodeState>.internal(
+  Episodes.new,
   name: r'episodesProvider',
   debugGetCreateSourceHash:
       const bool.fromEnvironment('dart.vm.product') ? null : _$episodesHash,
@@ -19,6 +20,6 @@ final episodesProvider = AutoDisposeFutureProvider<EpisodeModel>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef EpisodesRef = AutoDisposeFutureProviderRef<EpisodeModel>;
+typedef _$Episodes = AutoDisposeNotifier<EpisodeState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
