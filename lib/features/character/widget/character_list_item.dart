@@ -1,6 +1,6 @@
 part of '../view/character_view.dart';
 
-class CharacterItem extends StatelessWidget {
+class CharacterItem extends ConsumerStatefulWidget {
   const CharacterItem({
     super.key,
     required this.character,
@@ -11,17 +11,32 @@ class CharacterItem extends StatelessWidget {
   final bool isLoading;
 
   @override
+  ConsumerState<CharacterItem> createState() => _CharacterItemState();
+}
+
+class _CharacterItemState extends ConsumerState<CharacterItem> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref
+          .read(favoriteProvider.notifier)
+          .checkIsFavorite(widget.character.name ?? '');
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: context.paddingAllDefault,
       child: ClipPath(
         clipper: CustomCardShape(),
-        child: isLoading
+        child: widget.isLoading
             ? const ShimmerEffect()
             : GestureDetector(
                 onTap: () {
                   context.push(RouteNames.characterDetailScreen,
-                      extra: character);
+                      extra: widget.character);
                 },
                 child: Container(
                   width: context.width,
@@ -41,6 +56,47 @@ class CharacterItem extends StatelessWidget {
                   child: Stack(
                     children: [
                       Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Consumer(builder: (context, ref, child) {
+                          final favoriteState = ref.watch(favoriteProvider);
+                          final isFavorite = favoriteState.characters.any(
+                              (char) =>
+                                  char.characterId == widget.character.id);
+
+                          return IconButton(
+                            onPressed: () {
+                              if (isFavorite) {
+                                ref
+                                    .read(favoriteProvider.notifier)
+                                    .deleteCharacter(
+                                        widget.character.name ?? '');
+                              } else {
+                                final characterLocal = CharacterLocal()
+                                  ..characterId = widget.character.id
+                                  ..name = widget.character.name
+                                  ..image = widget.character.image
+                                  ..status = widget.character.status
+                                  ..species = widget.character.species
+                                  ..type = widget.character.type
+                                  ..gender = widget.character.gender
+                                  ..episode = widget.character.episode;
+
+                                ref
+                                    .read(favoriteProvider.notifier)
+                                    .toggleFavorite(characterLocal);
+                              }
+                            },
+                            icon: Icon(
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: isFavorite ? Colors.red : Colors.white,
+                            ),
+                          );
+                        }),
+                      ),
+                      Positioned(
                         bottom: 0,
                         right: 0,
                         child: Container(
@@ -49,7 +105,7 @@ class CharacterItem extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              character.status ?? '',
+                              widget.character.status ?? '',
                               style: const TextStyle(color: Colors.white),
                             ),
                           ),
@@ -63,7 +119,8 @@ class CharacterItem extends StatelessWidget {
                               borderRadius: const BorderRadius.only(
                                 bottomLeft: Radius.circular(10),
                               ),
-                              child: CustomImageBuild(image: character.image),
+                              child: CustomImageBuild(
+                                  image: widget.character.image),
                             ),
                           ),
                           const SizedBox(width: 20),
@@ -75,10 +132,10 @@ class CharacterItem extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    character.name ?? '',
+                                    widget.character.name ?? '',
                                     style: context.textTheme.titleLarge,
                                   ),
-                                  Text(character.species ?? ''),
+                                  Text(widget.character.species ?? ''),
                                 ],
                               )),
                         ],
